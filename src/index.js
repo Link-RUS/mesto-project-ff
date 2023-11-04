@@ -15,7 +15,14 @@ const descriptionInput = profileForm.querySelector(
 const profileName = document.querySelector(".profile__title");
 const profileDescription = document.querySelector(".profile__description");
 
+const addButton = document.querySelector(".profile__add-button");
 const addCardPopup = document.querySelector(".popup_type_new-card");
+const addCardForm = addCardPopup.querySelector(".popup__form");
+const addCardFormName = addCardForm.querySelector(
+  ".popup__input_type_card-name"
+);
+const addCardFormUrl = addCardForm.querySelector(".popup__input_type_url");
+
 const imagePopup = document.querySelector(".popup_type_image");
 
 initialCards.forEach((card) => {
@@ -46,16 +53,31 @@ function closePopup(element) {
 function closeClick(evt) {
   if (evt.target.classList.contains("popup__close"))
     closePopup(evt.currentTarget);
-  if (evt.target.classList.contains("popup"))
-    closePopup(evt.currentTarget); 
+  if (evt.target.classList.contains("popup")) closePopup(evt.currentTarget);
 }
 
-profilePopup.addEventListener('click', closeClick);
-profileForm.addEventListener('submit', profileSubmit);
+profilePopup.addEventListener("click", closeClick);
+profileForm.addEventListener("submit", profileSubmit);
+addCardPopup.addEventListener("click", closeClick);
+addCardForm.addEventListener("submit", addCard);
 
-function profileSubmit(evt){
+function profileSubmit(evt) {
   evt.preventDefault();
   profileName.textContent = nameInput.value;
   profileDescription.textContent = descriptionInput.value;
   closePopup(profilePopup);
+}
+
+addButton.addEventListener("click", (evt) => {
+  openPopup(addCardPopup);
+});
+
+function addCard(evt) {
+  evt.preventDefault();
+  const card = {};
+  card.name = addCardFormName.value;
+  card.link = addCardFormUrl.value;
+  placesList.prepend(createCard(card, removeCard));
+  document.forms["new-place"].reset();
+  closePopup(addCardPopup);
 }
