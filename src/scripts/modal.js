@@ -1,12 +1,8 @@
 function openPopup(element) {
-  if (!element.classList.contains("popup_is-animated")) {
-    setTimeout(() => {
-      element.classList.add("popup_is-opened");
-    }, 1);
-    element.classList.add("popup_is-animated");
-  } else {
+  setTimeout(() => {
     element.classList.add("popup_is-opened");
-  }
+  }, 1);
+  element.classList.add("popup_is-animated");
 
   document.addEventListener("keydown", closeEsc);
 }
@@ -18,6 +14,9 @@ function closeEsc(evt) {
 
 function closePopup(element) {
   document.removeEventListener("keydown", closeEsc);
+  setTimeout(() => {
+    element.classList.remove("popup_is-animated");
+  }, 1000);
   element.classList.remove("popup_is-opened");
 }
 
