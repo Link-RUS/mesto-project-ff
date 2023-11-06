@@ -16,7 +16,7 @@ function closePopup(element) {
   document.removeEventListener("keydown", closeEsc);
   setTimeout(() => {
     element.classList.remove("popup_is-animated");
-  }, 1000);
+  }, 600);
   element.classList.remove("popup_is-opened");
 }
 

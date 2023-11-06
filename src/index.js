@@ -8,21 +8,17 @@ const placesList = document.querySelector(".places__list");
 
 const profilePopup = document.querySelector(".popup_type_edit");
 const profileEditButton = document.querySelector(".profile__edit-button");
-const profileForm = profilePopup.querySelector(".popup__form");
-const nameInput = profileForm.querySelector(".popup__input_type_name");
-const descriptionInput = profileForm.querySelector(
-  ".popup__input_type_description"
-);
+const profileForm = document.forms["edit-profile"];
+const nameInput = profileForm.elements.name;
+const descriptionInput = profileForm.elements.description;
 const profileName = document.querySelector(".profile__title");
 const profileDescription = document.querySelector(".profile__description");
 
 const addButton = document.querySelector(".profile__add-button");
 const addCardPopup = document.querySelector(".popup_type_new-card");
-const addCardForm = addCardPopup.querySelector(".popup__form");
-const addCardFormName = addCardForm.querySelector(
-  ".popup__input_type_card-name"
-);
-const addCardFormUrl = addCardForm.querySelector(".popup__input_type_url");
+const addCardForm = document.forms["new-place"];
+const addCardFormName = addCardForm.elements["place-name"];
+const addCardFormUrl = addCardForm.elements.link;
 
 initialCards.forEach((card) => {
   placesList.append(createCard(card, removeCard, likeCard, createImagePopup));
@@ -38,17 +34,21 @@ addButton.addEventListener("click", (evt) => {
   openPopup(addCardPopup);
 });
 
-profilePopup.addEventListener("click", closeClick);
+profilePopup.addEventListener("mousedown", closeClick);
 profileForm.addEventListener("submit", profileSubmit);
-addCardPopup.addEventListener("click", closeClick);
+addCardPopup.addEventListener("mousedown", closeClick);
 addCardForm.addEventListener("submit", addCard);
 
 function addCard(evt) {
   evt.preventDefault();
-  const card = {};
-  card.name = addCardFormName.value;
-  card.link = addCardFormUrl.value;
-  placesList.prepend(createCard(card, removeCard, likeCard, createImagePopup));
+  placesList.prepend(
+    createCard(
+      { name: addCardFormName.value, link: addCardFormUrl.value },
+      removeCard,
+      likeCard,
+      createImagePopup
+    )
+  );
   document.forms["new-place"].reset();
   closePopup(addCardPopup);
 }
