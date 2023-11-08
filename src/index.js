@@ -20,6 +20,10 @@ const addCardForm = document.forms["new-place"];
 const addCardFormName = addCardForm.elements["place-name"];
 const addCardFormUrl = addCardForm.elements.link;
 
+const imagePopup = document.querySelector(".popup_type_image");
+const image = imagePopup.querySelector(".popup__image");
+const popupCaption = document.querySelector(".popup__caption");
+
 initialCards.forEach((card) => {
   placesList.append(createCard(card, removeCard, likeCard, createImagePopup));
 });
@@ -33,11 +37,6 @@ profileEditButton.addEventListener("click", (evt) => {
 addButton.addEventListener("click", (evt) => {
   openPopup(addCardPopup);
 });
-
-profilePopup.addEventListener("mousedown", closeClick);
-profileForm.addEventListener("submit", profileSubmit);
-addCardPopup.addEventListener("mousedown", closeClick);
-addCardForm.addEventListener("submit", addCard);
 
 function addCard(evt) {
   evt.preventDefault();
@@ -60,15 +59,15 @@ function profileSubmit(evt) {
   closePopup(profilePopup);
 }
 
-function createImagePopup(evt) {
-  const imagePopup = document.querySelector(".popup_type_image");
-  const image = imagePopup.querySelector(".popup__image");
-  const popupCaption = document.querySelector(".popup__caption");
-  popupCaption.textContent = evt.target
-    .closest(".card")
-    .querySelector(".card__title").textContent;
-  image.src = evt.target.src;
-  image.alt = evt.target.alt;
-  imagePopup.addEventListener("click", closeClick);
+function createImagePopup(item) {
+  popupCaption.textContent = item.name;
+  image.src = item.link;
+  image.alt = item.name;
   openPopup(imagePopup);
 }
+
+profilePopup.addEventListener("mousedown", closeClick);
+profileForm.addEventListener("submit", profileSubmit);
+addCardPopup.addEventListener("mousedown", closeClick);
+addCardForm.addEventListener("submit", addCard);
+imagePopup.addEventListener("click", closeClick);

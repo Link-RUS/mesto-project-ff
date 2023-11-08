@@ -11,7 +11,7 @@ function createCard(item, delCard, likeCard, createImagePopup) {
   card
     .querySelector(".card__like-button")
     .addEventListener("click", (evt) => likeCard(evt));
-  cardImage.addEventListener("click", createImagePopup);
+  cardImage.addEventListener("click", () => createImagePopup(item));
   return card;
 }
 
