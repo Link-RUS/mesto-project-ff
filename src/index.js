@@ -3,7 +3,9 @@ import "./pages/index.css";
 import { createCard, removeCard, likeCard } from "./scripts/card.js";
 import { openPopup, closePopup, closeClick } from "./scripts/modal.js";
 import { enableValidation, clearValidation } from "./scripts/validation.js";
-import { get } from "./scripts/api.js";
+import { get, post } from "./scripts/api.js";
+
+let userId = '';
 
 const placesList = document.querySelector(".places__list");
 
@@ -51,23 +53,41 @@ addButton.addEventListener("click", () => {
 
 function addCard(evt) {
   evt.preventDefault();
-  placesList.prepend(
-    createCard(
-      { name: addCardFormName.value, link: addCardFormUrl.value },
-      removeCard,
-      likeCard,
-      createImagePopup
+  post("cards", {
+    name: addCardFormName.value,
+    link: addCardFormUrl.value,
+  })
+    .then((card) => {
+      placesList.prepend(
+        createCard(card, removeCard, likeCard, createImagePopup, userId)
+      );
+    })
+    .catch((err) =>
+      console.error("Ошибка добавления карточки:", err)
     )
-  );
-  document.forms["new-place"].reset(); //??????addCardForm
-  closePopup(addCardPopup);
+    .finally(() => {
+      addCardForm.reset();
+      closePopup(addCardPopup);
+    });
 }
 
 function profileSubmit(evt) {
   evt.preventDefault();
-  profileName.textContent = nameInput.value;
-  profileDescription.textContent = descriptionInput.value;
-  closePopup(profilePopup);
+  post(
+    "users/me",
+    { name: nameInput.value, about: descriptionInput.value },
+    "PATCH"
+  )
+    .then((data) => {
+      profileName.textContent = data.name;
+      profileDescription.textContent = data.about;
+    })
+    .catch((err) =>
+      console.error("Ошибка обновления информации о пользователе:", err)
+    )
+    .finally(() => {
+      closePopup(profilePopup);
+    });
 }
 
 function createImagePopup(item) {
@@ -87,11 +107,12 @@ Promise.all([get("users/me"), get("cards")])
   .then(([user, cards]) => {
     profileName.textContent = user.name;
     profileDescription.textContent = user.about;
+    userId = user._id;
     profileImage.style.backgroundImage = `url('${user.avatar}')`;
 
     cards.forEach((card) => {
       placesList.append(
-        createCard(card, removeCard, likeCard, createImagePopup)
+        createCard(card, removeCard, likeCard, createImagePopup, userId)
       );
     });
   })
