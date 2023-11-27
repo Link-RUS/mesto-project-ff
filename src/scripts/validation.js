@@ -32,7 +32,9 @@ const hideInputError = (formElement, inputElement, validationConfig) => {
 
 function setCustomValidity(inputElement) {
   if (
-    (inputElement.name === "place-name" || inputElement.name === "name") &&
+    (inputElement.name === "place-name" ||
+      inputElement.name === "name" ||
+      inputElement.name === "description") &&
     !/^[A-Za-zА-Яа-яЁё\s-]*$/.test(inputElement.value)
   ) {
     inputElement.setCustomValidity(inputElement.dataset.errorMessage);
