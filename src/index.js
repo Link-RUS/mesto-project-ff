@@ -42,23 +42,6 @@ const validationConfig = {
 
 enableValidation(validationConfig);
 
-profileEditButton.addEventListener("click", () => {
-  nameInput.value = profileName.textContent;
-  descriptionInput.value = profileDescription.textContent;
-  openPopup(profilePopup);
-  clearValidation(profilePopup, validationConfig);
-});
-
-addButton.addEventListener("click", () => {
-  openPopup(addCardPopup);
-  clearValidation(addCardForm, validationConfig);
-});
-
-avatarEditButton.addEventListener("click", () => {
-  openPopup(avatarPopup);
-  clearValidation(avatarPopup, validationConfig);
-});
-
 function addCard(evt) {
   evt.preventDefault();
   const saveButton = addCardForm.querySelector(".popup__button");
@@ -130,14 +113,6 @@ function createImagePopup(item) {
   openPopup(imagePopup);
 }
 
-profilePopup.addEventListener("mousedown", closeClick);
-profileForm.addEventListener("submit", profileSubmit);
-addCardPopup.addEventListener("mousedown", closeClick);
-addCardForm.addEventListener("submit", addCard);
-avatarPopup.addEventListener("mousedown", closeClick);
-avatarForm.addEventListener("submit", avatarSubmit);
-imagePopup.addEventListener("click", closeClick);
-
 Promise.all([get("users/me"), get("cards")])
   .then(([user, cards]) => {
     profileName.textContent = user.name;
@@ -153,3 +128,28 @@ Promise.all([get("users/me"), get("cards")])
   .catch((err) =>
     console.error("Ошибка получения данных пользователя и карточек:", err)
   );
+
+profileEditButton.addEventListener("click", () => {
+  nameInput.value = profileName.textContent;
+  descriptionInput.value = profileDescription.textContent;
+  openPopup(profilePopup);
+  clearValidation(profilePopup, validationConfig);
+});
+
+addButton.addEventListener("click", () => {
+  openPopup(addCardPopup);
+  clearValidation(addCardForm, validationConfig);
+});
+
+avatarEditButton.addEventListener("click", () => {
+  openPopup(avatarPopup);
+  clearValidation(avatarPopup, validationConfig);
+});
+
+profilePopup.addEventListener("mousedown", closeClick);
+profileForm.addEventListener("submit", profileSubmit);
+addCardPopup.addEventListener("mousedown", closeClick);
+addCardForm.addEventListener("submit", addCard);
+avatarPopup.addEventListener("mousedown", closeClick);
+avatarForm.addEventListener("submit", avatarSubmit);
+imagePopup.addEventListener("click", closeClick);

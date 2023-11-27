@@ -21,12 +21,7 @@
       <main class="content">
         <section class="profile page__section">
           <button class="profile__avatar" type="button">
-            <div
-              class="profile__image"
-              style="
-                background-image: url('<%=require(`./images/avatar.jpg`)%>');
-              "
-            ></div>
+            <div class="profile__image"></div>
             <div
               class="profile__edit-icon"
               style="
@@ -35,9 +30,9 @@
             ></div>
           </button>
           <div class="profile__info">
-            <h1 class="profile__title">Жак-Ив Кусто</h1>
+            <h1 class="profile__title"></h1>
             <button class="profile__edit-button" type="button"></button>
-            <p class="profile__description">Исследователь океана</p>
+            <p class="profile__description"></p>
           </div>
           <button class="profile__add-button" type="button"></button>
         </section>
@@ -63,7 +58,7 @@
               maxlength="40"
               data-error-message="Разрешены только латинские, кириллические буквы, знаки дефиса и пробелы"
             />
-            <span class="name_error">Необходимо заполнить данное поле</span>
+            <span class="name_error"></span>
             <input
               type="text"
               name="description"
@@ -73,9 +68,7 @@
               minlength="2"
               maxlength="200"
             />
-            <span class="description_error"
-              >Необходимо заполнить данное поле</span
-            >
+            <span class="description_error"></span>
             <button type="submit" class="button popup__button">
               Сохранить
             </button>
@@ -97,9 +90,7 @@
               maxlength="30"
               data-error-message="Разрешены только латинские, кириллические буквы, знаки дефиса и пробелы"
             />
-            <span class="place-name_error"
-              >Необходимо заполнить данное поле</span
-            >
+            <span class="place-name_error"></span>
             <input
               type="url"
               name="link"
@@ -107,7 +98,7 @@
               placeholder="Ссылка на картинку"
               required
             />
-            <span class="link_error">Необходимо заполнить данное поле</span>
+            <span class="link_error"></span>
             <button type="submit" class="button popup__button">
               Сохранить
             </button>
@@ -135,7 +126,7 @@
               placeholder="Ссылка на картинку"
               required
             />
-            <span class="avatar_error">Необходимо заполнить данное поле</span>
+            <span class="avatar_error"></span>
             <button type="submit" class="button popup__button">
               Сохранить
             </button>
