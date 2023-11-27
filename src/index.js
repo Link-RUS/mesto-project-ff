@@ -62,7 +62,7 @@ avatarEditButton.addEventListener("click", () => {
 function addCard(evt) {
   evt.preventDefault();
   const saveButton = addCardForm.querySelector(".popup__button");
-  saveButton.textContent = "Сохранить…"
+  saveButton.textContent = "Сохранить…";
   saveButton.classList.add(validationConfig.inactiveButtonClass);
   post("cards", {
     name: addCardFormName.value,
@@ -77,7 +77,7 @@ function addCard(evt) {
     .finally(() => {
       addCardForm.reset();
       closePopup(addCardPopup);
-      saveButton.textContent = "Сохранить"
+      saveButton.textContent = "Сохранить";
       saveButton.classList.remove(validationConfig.inactiveButtonClass);
     });
 }
@@ -85,7 +85,7 @@ function addCard(evt) {
 function profileSubmit(evt) {
   evt.preventDefault();
   const saveButton = profileForm.querySelector(".popup__button");
-  saveButton.textContent = "Сохранить…"
+  saveButton.textContent = "Сохранить…";
   saveButton.classList.add(validationConfig.inactiveButtonClass);
   post(
     "users/me",
@@ -101,7 +101,7 @@ function profileSubmit(evt) {
     )
     .finally(() => {
       closePopup(profilePopup);
-      saveButton.textContent = "Сохранить"
+      saveButton.textContent = "Сохранить";
       saveButton.classList.remove(validationConfig.inactiveButtonClass);
     });
 }
@@ -109,7 +109,7 @@ function profileSubmit(evt) {
 function avatarSubmit(evt) {
   evt.preventDefault();
   const saveButton = avatarForm.querySelector(".popup__button");
-  saveButton.textContent = "Сохранить…"
+  saveButton.textContent = "Сохранить…";
   saveButton.classList.add(validationConfig.inactiveButtonClass);
   post("users/me/avatar", { avatar: avtarInput.value }, "PATCH")
     .then((user) => {
@@ -118,7 +118,7 @@ function avatarSubmit(evt) {
     .catch((err) => console.error("Ошибка обновления аватара:", err))
     .finally(() => {
       closePopup(avatarPopup);
-      saveButton.textContent = "Сохранить"
+      saveButton.textContent = "Сохранить";
       saveButton.classList.remove(validationConfig.inactiveButtonClass);
     });
 }

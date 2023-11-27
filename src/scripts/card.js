@@ -11,9 +11,9 @@ function createCard(item, delCard, likeCard, createImagePopup, userId = 0) {
   cardImage.alt = item.name;
   likeCounter.textContent = item.likes.length;
   card.querySelector(".card__title").textContent = item.name;
-  if (userId === item.owner._id || userId === 0) cardDeleteBtn.style.display = "block";
+  if (userId === item.owner._id || userId === 0)
+    cardDeleteBtn.style.display = "block";
   else cardDeleteBtn.style.display = "none";
-
 
   if (isLike(item, userId))
     cardLike.classList.add("card__like-button_is-active");
