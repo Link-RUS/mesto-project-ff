@@ -5,8 +5,6 @@ import { openPopup, closePopup, closeClick } from "./scripts/modal.js";
 import { enableValidation, clearValidation } from "./scripts/validation.js";
 import { get, post } from "./scripts/api.js";
 
-let userId = '';
-
 const placesList = document.querySelector(".places__list");
 
 const profilePopup = document.querySelector(".popup_type_edit");
@@ -27,6 +25,11 @@ const addCardFormUrl = addCardForm.elements.link;
 const imagePopup = document.querySelector(".popup_type_image");
 const image = imagePopup.querySelector(".popup__image");
 const popupCaption = document.querySelector(".popup__caption");
+
+const avatarEditButton = document.querySelector(".profile__avatar");
+const avatarPopup = document.querySelector(".popup_type_avatar");
+const avatarForm = document.forms["new-avatar"];
+const avtarInput = avatarForm.elements.avatar;
 
 const validationConfig = {
   formSelector: ".popup__form",
@@ -51,28 +54,39 @@ addButton.addEventListener("click", () => {
   clearValidation(addCardForm, validationConfig);
 });
 
+avatarEditButton.addEventListener("click", () => {
+  openPopup(avatarPopup);
+  clearValidation(avatarPopup, validationConfig);
+});
+
 function addCard(evt) {
   evt.preventDefault();
+  const saveButton = addCardForm.querySelector(".popup__button");
+  saveButton.textContent = "Сохранить…"
+  saveButton.classList.add(validationConfig.inactiveButtonClass);
   post("cards", {
     name: addCardFormName.value,
     link: addCardFormUrl.value,
   })
     .then((card) => {
       placesList.prepend(
-        createCard(card, removeCard, likeCard, createImagePopup, userId)
+        createCard(card, removeCard, likeCard, createImagePopup)
       );
     })
-    .catch((err) =>
-      console.error("Ошибка добавления карточки:", err)
-    )
+    .catch((err) => console.error("Ошибка добавления карточки:", err))
     .finally(() => {
       addCardForm.reset();
       closePopup(addCardPopup);
+      saveButton.textContent = "Сохранить"
+      saveButton.classList.remove(validationConfig.inactiveButtonClass);
     });
 }
 
 function profileSubmit(evt) {
   evt.preventDefault();
+  const saveButton = profileForm.querySelector(".popup__button");
+  saveButton.textContent = "Сохранить…"
+  saveButton.classList.add(validationConfig.inactiveButtonClass);
   post(
     "users/me",
     { name: nameInput.value, about: descriptionInput.value },
@@ -87,6 +101,25 @@ function profileSubmit(evt) {
     )
     .finally(() => {
       closePopup(profilePopup);
+      saveButton.textContent = "Сохранить"
+      saveButton.classList.remove(validationConfig.inactiveButtonClass);
+    });
+}
+
+function avatarSubmit(evt) {
+  evt.preventDefault();
+  const saveButton = avatarForm.querySelector(".popup__button");
+  saveButton.textContent = "Сохранить…"
+  saveButton.classList.add(validationConfig.inactiveButtonClass);
+  post("users/me/avatar", { avatar: avtarInput.value }, "PATCH")
+    .then((user) => {
+      profileImage.style.backgroundImage = `url('${user.avatar}')`;
+    })
+    .catch((err) => console.error("Ошибка обновления аватара:", err))
+    .finally(() => {
+      closePopup(avatarPopup);
+      saveButton.textContent = "Сохранить"
+      saveButton.classList.remove(validationConfig.inactiveButtonClass);
     });
 }
 
@@ -101,18 +134,19 @@ profilePopup.addEventListener("mousedown", closeClick);
 profileForm.addEventListener("submit", profileSubmit);
 addCardPopup.addEventListener("mousedown", closeClick);
 addCardForm.addEventListener("submit", addCard);
+avatarPopup.addEventListener("mousedown", closeClick);
+avatarForm.addEventListener("submit", avatarSubmit);
 imagePopup.addEventListener("click", closeClick);
 
 Promise.all([get("users/me"), get("cards")])
   .then(([user, cards]) => {
     profileName.textContent = user.name;
     profileDescription.textContent = user.about;
-    userId = user._id;
     profileImage.style.backgroundImage = `url('${user.avatar}')`;
 
     cards.forEach((card) => {
       placesList.append(
-        createCard(card, removeCard, likeCard, createImagePopup, userId)
+        createCard(card, removeCard, likeCard, createImagePopup, user._id)
       );
     });
   })

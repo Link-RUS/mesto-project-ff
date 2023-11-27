@@ -1,6 +1,6 @@
-import { get, post } from "./api.js";
+import { post } from "./api.js";
 
-function createCard(item, delCard, likeCard, createImagePopup, userId) {
+function createCard(item, delCard, likeCard, createImagePopup, userId = 0) {
   const cardTemplate = document.querySelector("#card-template").content;
   const card = cardTemplate.querySelector(".places__item").cloneNode(true);
   const cardImage = card.querySelector(".card__image");
@@ -11,8 +11,9 @@ function createCard(item, delCard, likeCard, createImagePopup, userId) {
   cardImage.alt = item.name;
   likeCounter.textContent = item.likes.length;
   card.querySelector(".card__title").textContent = item.name;
-  if (userId !== item.owner._id) cardDeleteBtn.style.display = "none";
-  else cardDeleteBtn.style.display = "block";
+  if (userId === item.owner._id || userId === 0) cardDeleteBtn.style.display = "block";
+  else cardDeleteBtn.style.display = "none";
+
 
   if (isLike(item, userId))
     cardLike.classList.add("card__like-button_is-active");
