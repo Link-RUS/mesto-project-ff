@@ -3,7 +3,15 @@ import "./pages/index.css";
 import { createCard, removeCard, likeCard } from "./scripts/card.js";
 import { openPopup, closePopup, closeClick } from "./scripts/modal.js";
 import { enableValidation, clearValidation } from "./scripts/validation.js";
-import { get, post } from "./scripts/api.js";
+import { validationConfig } from "./constants.js";
+import { handleSubmit } from "./scripts/utils.js";
+import {
+  updateAvatar,
+  addNewCard,
+  updateUserInfo,
+  getInitialCards,
+  getUserInfo,
+} from "./scripts/api.js";
 
 const placesList = document.querySelector(".places__list");
 
@@ -31,79 +39,43 @@ const avatarPopup = document.querySelector(".popup_type_avatar");
 const avatarForm = document.forms["new-avatar"];
 const avtarInput = avatarForm.elements.avatar;
 
-const validationConfig = {
-  formSelector: ".popup__form",
-  inputSelector: ".popup__input",
-  submitButtonSelector: ".popup__button",
-  inactiveButtonClass: "popup__button_disabled",
-  inputErrorClass: "popup__input_type_error",
-  errorClass: "popup__error_visible",
-};
-
 enableValidation(validationConfig);
 
 function addCard(evt) {
-  evt.preventDefault();
-  const saveButton = addCardForm.querySelector(".popup__button");
-  saveButton.textContent = "Сохранить…";
-  saveButton.classList.add(validationConfig.inactiveButtonClass);
-  post("cards", {
-    name: addCardFormName.value,
-    link: addCardFormUrl.value,
-  })
-    .then((card) => {
-      placesList.prepend(
-        createCard(card, removeCard, likeCard, createImagePopup)
-      );
-    })
-    .catch((err) => console.error("Ошибка добавления карточки:", err))
-    .finally(() => {
-      addCardForm.reset();
-      closePopup(addCardPopup);
-      saveButton.textContent = "Сохранить";
-      saveButton.classList.remove(validationConfig.inactiveButtonClass);
-    });
+  function makeRequest() {
+    return addNewCard(addCardFormName.value, addCardFormUrl.value).then(
+      (card) => {
+        placesList.prepend(
+          createCard(card, removeCard, likeCard, createImagePopup, card.owner._id)
+        );
+        closePopup(addCardPopup);
+      }
+    );
+  }
+  handleSubmit(makeRequest, evt);
 }
 
 function profileSubmit(evt) {
-  evt.preventDefault();
-  const saveButton = profileForm.querySelector(".popup__button");
-  saveButton.textContent = "Сохранить…";
-  saveButton.classList.add(validationConfig.inactiveButtonClass);
-  post(
-    "users/me",
-    { name: nameInput.value, about: descriptionInput.value },
-    "PATCH"
-  )
-    .then((data) => {
-      profileName.textContent = data.name;
-      profileDescription.textContent = data.about;
-    })
-    .catch((err) =>
-      console.error("Ошибка обновления информации о пользователе:", err)
-    )
-    .finally(() => {
-      closePopup(profilePopup);
-      saveButton.textContent = "Сохранить";
-      saveButton.classList.remove(validationConfig.inactiveButtonClass);
-    });
+  function makeRequest() {
+    return updateUserInfo(nameInput.value, descriptionInput.value).then(
+      (data) => {
+        profileName.textContent = data.name;
+        profileDescription.textContent = data.about;
+        closePopup(profilePopup);
+      }
+    );
+  }
+  handleSubmit(makeRequest, evt);
 }
 
 function avatarSubmit(evt) {
-  evt.preventDefault();
-  const saveButton = avatarForm.querySelector(".popup__button");
-  saveButton.textContent = "Сохранить…";
-  saveButton.classList.add(validationConfig.inactiveButtonClass);
-  post("users/me/avatar", { avatar: avtarInput.value }, "PATCH")
-    .then((user) => {
+  function makeRequest() {
+    return updateAvatar(avtarInput.value).then((user) => {
       profileImage.style.backgroundImage = `url('${user.avatar}')`;
-    })
-    .catch((err) => console.error("Ошибка обновления аватара:", err))
-    .finally(() => {
       closePopup(avatarPopup);
-      saveButton.textContent = "Сохранить";
-      saveButton.classList.remove(validationConfig.inactiveButtonClass);
     });
+  }
+  handleSubmit(makeRequest, evt);
 }
 
 function createImagePopup(item) {
@@ -113,7 +85,7 @@ function createImagePopup(item) {
   openPopup(imagePopup);
 }
 
-Promise.all([get("users/me"), get("cards")])
+Promise.all([getUserInfo(), getInitialCards()])
   .then(([user, cards]) => {
     profileName.textContent = user.name;
     profileDescription.textContent = user.about;

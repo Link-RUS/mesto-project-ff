@@ -1,6 +1,6 @@
-import { post } from "./api.js";
+import { deleteCard, deleteLike, putLike } from "./api.js";
 
-function createCard(item, delCard, likeCard, createImagePopup, userId = 0) {
+function createCard(item, delCard, likeCard, createImagePopup, userId) {
   const cardTemplate = document.querySelector("#card-template").content;
   const card = cardTemplate.querySelector(".places__item").cloneNode(true);
   const cardImage = card.querySelector(".card__image");
@@ -11,7 +11,7 @@ function createCard(item, delCard, likeCard, createImagePopup, userId = 0) {
   cardImage.alt = item.name;
   likeCounter.textContent = item.likes.length;
   card.querySelector(".card__title").textContent = item.name;
-  if (userId === item.owner._id || userId === 0)
+  if (userId === item.owner._id)
     cardDeleteBtn.style.display = "block";
   else cardDeleteBtn.style.display = "none";
 
@@ -20,9 +20,9 @@ function createCard(item, delCard, likeCard, createImagePopup, userId = 0) {
 
   cardDeleteBtn.addEventListener("click", (evt) => delCard(evt, item));
 
-  cardLike.addEventListener("click", (evt) =>
-    likeCard(evt, item, userId, likeCounter)
-  );
+  cardLike.addEventListener("click", (evt) => {
+    likeCard(evt, item, userId, likeCounter);
+  });
 
   cardImage.addEventListener("click", () => createImagePopup(item));
 
@@ -30,21 +30,30 @@ function createCard(item, delCard, likeCard, createImagePopup, userId = 0) {
 }
 
 function removeCard(evt, item) {
-  post(`cards/${item._id}`, [], "DELETE");
-  evt.target.closest(".places__item").remove();
+  deleteCard(item._id)
+    .then(() => {
+      evt.target.closest(".places__item").remove();
+    })
+    .catch((err) => console.error("Ошибка удаления карточки:", err));
 }
 
 function likeCard(evt, item, userId, likeCounter) {
   if (!isLike(item, userId))
-    post(`cards/likes/${item._id}`, [], "PUT").then((item) => {
-      likeCounter.textContent = item.likes.length;
-      evt.target.classList.add("card__like-button_is-active");
-    });
+    putLike(item._id)
+      .then((card) => {
+        evt.target.classList.add("card__like-button_is-active");
+        likeCounter.textContent = card.likes.length;
+        item.likes = card.likes;
+      })
+      .catch((err) => console.error("Ошибка установки лайка:", err));
   else
-    post(`cards/likes/${item._id}`, [], "DELETE").then((item) => {
-      likeCounter.textContent = item.likes.length;
-      evt.target.classList.remove("card__like-button_is-active");
-    });
+    deleteLike(item._id)
+      .then((card) => {
+        evt.target.classList.remove("card__like-button_is-active");
+        likeCounter.textContent = card.likes.length;
+        item.likes = card.likes;
+      })
+      .catch((err) => console.error("Ошибка снятия лайка:", err));
 }
 
 function isLike(item, userId) {

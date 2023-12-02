@@ -1,5 +1,43 @@
-const BASE_URL = "https://mesto.nomoreparties.co/v1/wff-cohort-1/";
-const TOKEN = "95326bff-eafb-4149-8ddc-943453bbce44";
+import { TOKEN, BASE_URL } from "../constants.js";
+
+function getUserInfo() {
+  return get("users/me");
+}
+
+function getInitialCards() {
+  return get("cards");
+}
+
+function updateUserInfo(name, description) {
+  return post(
+    "users/me",
+    { name: `${name}`, about: `${description}` },
+    "PATCH"
+  );
+}
+
+function addNewCard(name, link) {
+  return post("cards", {
+    name: `${name}`,
+    link: `${link}`,
+  });
+}
+
+function putLike(id) {
+  return post(`cards/likes/${id}`, [], "PUT");
+}
+
+function deleteLike(id) {
+  return post(`cards/likes/${id}`, [], "DELETE");
+}
+
+function deleteCard(id) {
+  return post(`cards/${id}`, [], "DELETE");
+}
+
+function updateAvatar(avatar) {
+  return post("users/me/avatar", { avatar: `${avatar}` }, "PATCH");
+}
 
 function get(uri, query = {}, isHead = false) {
   const targetUrl = BASE_URL + uri;
@@ -9,7 +47,7 @@ function get(uri, query = {}, isHead = false) {
     headers: {
       authorization: TOKEN,
     },
-  }).then(hendleResponse);
+  }).then(handleResponse);
 }
 
 function post(uri, data, method = "POST") {
@@ -22,12 +60,23 @@ function post(uri, data, method = "POST") {
       "Content-Type": "application/json",
     },
     body,
-  }).then(hendleResponse);
+  }).then(handleResponse);
 }
 
-function hendleResponse(response) {
+function handleResponse(response) {
   if (response.ok) return response.json();
   return Promise.reject(`Error: ${response.status}`);
 }
 
-export { get, post };
+export {
+  get,
+  post,
+  updateAvatar,
+  deleteCard,
+  deleteLike,
+  putLike,
+  addNewCard,
+  updateUserInfo,
+  getInitialCards,
+  getUserInfo,
+};

@@ -9,6 +9,7 @@ function clearValidation(form, validationConfig) {
     validationConfig.submitButtonSelector
   );
   buttonElement.classList.add(validationConfig.inactiveButtonClass);
+  buttonElement.disabled = true;
 }
 
 const showInputError = (
@@ -31,12 +32,7 @@ const hideInputError = (formElement, inputElement, validationConfig) => {
 };
 
 function setCustomValidity(inputElement) {
-  if (
-    (inputElement.name === "place-name" ||
-      inputElement.name === "name" ||
-      inputElement.name === "description") &&
-    !/^[A-Za-zА-Яа-яЁё\s-]*$/.test(inputElement.value)
-  ) {
+  if (inputElement.validity.patternMismatch) {
     inputElement.setCustomValidity(inputElement.dataset.errorMessage);
   } else {
     inputElement.setCustomValidity("");
@@ -90,8 +86,10 @@ const hasInvalidInput = (inputList) => {
 const toggleButtonState = (inputList, buttonElement, validationConfig) => {
   if (hasInvalidInput(inputList)) {
     buttonElement.classList.add(validationConfig.inactiveButtonClass);
+    buttonElement.disabled = true;
   } else {
     buttonElement.classList.remove(validationConfig.inactiveButtonClass);
+    buttonElement.disabled = false;
   }
 };
 
